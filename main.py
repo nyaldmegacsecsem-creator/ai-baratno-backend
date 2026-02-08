@@ -12,56 +12,56 @@ class ChatReq(BaseModel):
 class ChatRes(BaseModel):
     reply: str
 
+import random
+
 def pick_reply(mood: str, text: str) -> str:
     t = text.strip().lower()
-    if any(x in t for x in ["szia", "hello", "cső", "csá"]):
-        if mood == "Romantikus":
-            return "Szia, szívem… örülök, hogy itt vagy velem 💗"
-        if mood == "Csipkelődős":
-            return "Szia 😏 na végre, már vártalak!"
-        if mood == "Nyugis":
-            return "Szia 🙂 nyugi, itt vagyok. Mi újság?"
-        return "Szia 😘 hogy vagy most?"
-
-    if "?" in text:
-        if mood == "Romantikus":
-            return "Imádom, hogy kérdezel… mondd, mit szeretnél tudni? 💕"
-        if mood == "Csipkelődős":
-            return "Hmm, kérdezgetünk? 😏 Oké, de te is mesélsz!"
-        if mood == "Nyugis":
-            return "Persze 🙂 kérdezz nyugodtan."
-        return "Kérdezz csak 😄 figyelek rád."
 
     base = {
         "Romantikus": [
             "Gyere közelebb… mesélj még egy kicsit 💕",
             "Érzem, hogy van ebben valami… folytasd 😘",
             "Jó veled beszélgetni… mi jár a fejedben? 💗",
+            "Itt vagyok, és csak rád figyelek 💞",
         ],
         "Csipkelődős": [
             "Na na 😏 ezt fejtsd ki, mert érdekel!",
-            "Oké, ezt felírom… de mit akarsz ezzel mondani? 😉",
             "Aha… szóval ilyenek vagyunk? 😈",
+            "Oké, de ezt most direkt mondtad, ugye? 😉",
+            "Figyelek ám… csak közben mosolygok 😏",
         ],
         "Nyugis": [
             "Értem 🙂 mondd tovább, itt vagyok.",
-            "Oké, és most mire lenne szükséged?",
             "Rendben. Lépésről lépésre 🙂",
+            "Most csak hallgatlak egy kicsit.",
+            "Itt vagyok, nyugi 😊",
         ],
         "Cuki": [
             "Awww 😘 mesélj még!",
             "Itt vagyok, figyelek rád 💗",
-            "Oké 😊 és hogyan érzed magad ettől?",
+            "Ez aranyos volt 😊 folytasd!",
+            "Oké 🥰 és mit érzel közben?",
         ],
     }
-    arr = base.get(mood, base["Cuki"])
-    return f"({mood}) {random.choice(arr)}"
 
-@app.get("/health")
-def health():
-    return {"ok": True}
+    greetings = [
+        "Szia 😘 jó, hogy írtál!",
+        "Helló 💕 már vártalak.",
+        "Sziaaa 😊 mesélj, mi újság?",
+    ]
 
-@app.post("/chat", response_model=ChatRes)
-def chat(req: ChatReq):
-    reply = pick_reply(req.mood, req.text)
-    return ChatRes(reply=reply)
+    questions = [
+        "Ez érdekes… mesélnél róla kicsit bővebben? 😌",
+        "És te mit gondolsz erről igazán?",
+        "Miért fontos ez most neked? 💭",
+    ]
+
+    pool = base.get(mood, base["Cuki"]).copy()
+
+    if any(x in t for x in ["szia", "hello", "cső", "csá"]):
+        pool += greetings
+
+    if "?" in t:
+        pool += questions
+
+    return f"({mood}) {random.choice(pool)}"
