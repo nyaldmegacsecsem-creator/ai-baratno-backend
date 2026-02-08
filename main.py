@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import random
 
 app = FastAPI()
 
@@ -54,8 +55,7 @@ def pick_reply(mood: str, text: str) -> str:
         ],
     }
     arr = base.get(mood, base["Cuki"])
-    i = (len(text) + len(mood)) % len(arr)
-    return f"({mood}) {arr[i]}"
+    return f"({mood}) {random.choice(arr)}"
 
 @app.get("/health")
 def health():
