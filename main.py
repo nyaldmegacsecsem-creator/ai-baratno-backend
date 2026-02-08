@@ -12,9 +12,9 @@ class ChatReq(BaseModel):
 class ChatRes(BaseModel):
     reply: str
 
-@app.get("/health")
-def health():
-    return {"ok": True}
+@app.get("/version")
+def version():
+    return {"version": "v2-random-1"}
 
 def pick_reply(mood: str, text: str) -> str:
     base = {
