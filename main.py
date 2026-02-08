@@ -12,11 +12,11 @@ class ChatReq(BaseModel):
 class ChatRes(BaseModel):
     reply: str
 
-import random
+@app.get("/health")
+def health():
+    return {"ok": True}
 
 def pick_reply(mood: str, text: str) -> str:
-    t = text.strip().lower()
-
     base = {
         "Romantikus": [
             "Gyere közelebb… mesélj még egy kicsit 💕",
@@ -44,24 +44,10 @@ def pick_reply(mood: str, text: str) -> str:
         ],
     }
 
-    greetings = [
-        "Szia 😘 jó, hogy írtál!",
-        "Helló 💕 már vártalak.",
-        "Sziaaa 😊 mesélj, mi újság?",
-    ]
-
-    questions = [
-        "Ez érdekes… mesélnél róla kicsit bővebben? 😌",
-        "És te mit gondolsz erről igazán?",
-        "Miért fontos ez most neked? 💭",
-    ]
-
-    pool = base.get(mood, base["Cuki"]).copy()
-
-    if any(x in t for x in ["szia", "hello", "cső", "csá"]):
-        pool += greetings
-
-    if "?" in t:
-        pool += questions
-
+    pool = base.get(mood, base["Cuki"])
     return f"({mood}) {random.choice(pool)}"
+
+@app.post("/chat", response_model=ChatRes)
+def chat(req: ChatReq):
+    reply = pick_reply(req.mood, req.text)
+    return ChatRes(reply=reply)
